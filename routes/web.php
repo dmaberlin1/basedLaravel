@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MainController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -24,6 +25,11 @@ function cacheUse(): void
 //    return view('welcome');
 //});
 Route::get('/', [HomeController::class, 'index'])->name('home.index');
+Route::post('/store', [HomeController::class, 'store'])->name('home.store')->withoutMiddleware(VerifyCsrfToken::class);
+Route::delete('/destroy/{id}', [HomeController::class, 'destroy'])->name('home.destroy')->withoutMiddleware(VerifyCsrfToken::class);
+Route::post('/update', [HomeController::class, 'update'])->name('home.update')->withoutMiddleware(VerifyCsrfToken::class);
+Route::post('/updateSecond', [HomeController::class, 'updateSecond'])->name('home.updateSecond')->withoutMiddleware(VerifyCsrfToken::class);
+
 Route::get('/test', [HomeController::class, 'test'])->name('home.test');
 Route::get('/contact', [HomeController::class, 'contact'])->name('home.contact');
 Route::get('/single', \App\Http\Controllers\TestController::class);
@@ -33,9 +39,9 @@ Route::get('/main', [MainController::class, 'index']);
 Route::prefix('admin')->group(function () {
     Route::get('/products', [ProductController::class, 'index'])->name('admin.products.index');
     Route::get('/products/create', [ProductController::class, 'create'])->name('admin.products.create');
-    Route::post('/products', [ProductController::class, 'store'])->name('admin.products.store')->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
+    Route::post('/products', [ProductController::class, 'store'])->name('admin.products.store')->withoutMiddleware(VerifyCsrfToken::class);
     Route::get('/products/{product}', [ProductController::class, 'show'])->name('admin.products.show')->where(['product' => '[0-9]+']);
-    Route::match(['put', 'patch'], '/products/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit')->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
+    Route::match(['put', 'patch'], '/products/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit')->withoutMiddleware(VerifyCsrfToken::class);
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('admin.products.destroy')->where(['product' => '[0-9]+']);
 
     Route::resource('posts',\App\Http\Controllers\Admin\PostController::class)->except(['create','store','edit','update','destroy']);
