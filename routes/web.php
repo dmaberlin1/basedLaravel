@@ -23,7 +23,9 @@ function cacheUse(): void
 //Route::get('/', function () {
 //    return view('welcome');
 //});
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'index'])->name('home.index');
+Route::get('/test', [HomeController::class, 'test'])->name('home.test');
+Route::get('/contact', [HomeController::class, 'contact'])->name('home.contact');
 Route::get('/single', \App\Http\Controllers\TestController::class);
 Route::get('/main', [MainController::class, 'index']);
 
@@ -36,12 +38,11 @@ Route::prefix('admin')->group(function () {
     Route::match(['put', 'patch'], '/products/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit')->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('admin.products.destroy')->where(['product' => '[0-9]+']);
 
-    Route::resource('posts',\App\Http\Controllers\Admin\PostController::class);
+    Route::resource('posts',\App\Http\Controllers\Admin\PostController::class)->except(['create','store','edit','update','destroy']);
+//    Route::resource('posts',\App\Http\Controllers\Admin\PostController::class)->only(['index','show']);
 
-    Route::get('/posts/{id}', function ($id) {
-        return "Admin post $id";
-    });
 });
+
 
 
 
